@@ -22,14 +22,15 @@ interface Client{
 
 const Accounts: React.FC = () => {
     const [accounts, setAccounts] = useState<Account[]>([]);
-    const [add, setAdd] = useState<boolean>(false);
+    const [reload, setReload] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
         const response = await fetch('http://localhost:8080/api/account')
             setAccounts(await response.json());
         })();
-    }, [add]);
+        setReload(false);
+    }, [reload]);
     
     const [clients, setClients] = useState<Client[]>([]);
 
@@ -56,12 +57,19 @@ const Accounts: React.FC = () => {
             },
             body: JSON.stringify(data)
         })
-        setAdd(true);
+        setReload(true);
         console.log(response);
     });
 
 
-
+    const deleteAccount = async (idAccount: number) => {
+        console.log(idAccount);
+        const response = await fetch('http://localhost:8080/api/account/' + idAccount, {
+            method: 'delete'
+        })
+        console.log("response delete: " + response);
+        setReload(true);
+    }
 
 
     return (
@@ -78,11 +86,15 @@ const Accounts: React.FC = () => {
                 <tr>
                     <th>AccountId</th>
                     <th>Balance</th>
+                    <th></th>
                 </tr>
                 {accounts.map((account) => {
                     return <tr>
                         <td>{account.accountId}</td>
                         <td>{account.balance}</td>
+                        <td>
+                            <Button variant="danger" onClick={() => deleteAccount(account.accountId)}>Delete</Button>
+                        </td>
                     </tr>;
                 })}
             </tbody>

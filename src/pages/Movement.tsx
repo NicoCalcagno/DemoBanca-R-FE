@@ -24,14 +24,15 @@ interface Account{
 const Movements: React.FC = () => {
     const [movements, setMovements] = useState<Movement[]>([]);
     
-    const [add, setAdd] = useState<boolean>(false);
+    const [reload, setReload] = useState<boolean>(false);
 
     useEffect(() => {
         (async () => {
         const response = await fetch('http://localhost:8080/api/movement')
             setMovements(await response.json());
         })();
-    }, [add]);
+        setReload(false);
+    }, [reload]);
     
 
     const [accounts, setAccounts] = useState<Account[]>([]);
@@ -59,9 +60,19 @@ const Movements: React.FC = () => {
             },
             body: JSON.stringify(data)
         })
-        setAdd(true);
+        setReload(true);
         console.log(response);
     });
+
+
+    const deleteMovement = async (idMovement: number) => {
+        console.log(idMovement);
+        const response = await fetch('http://localhost:8080/api/movement/' + idMovement, {
+            method: 'delete'
+        })
+        console.log("response delete: " + response);
+        setReload(true);
+    }
 
 
     return (
@@ -77,7 +88,7 @@ const Movements: React.FC = () => {
                     <th>Type</th>
                     <th>Amount</th>
                     <th>Balance</th>
-
+                    <th></th>
                 </tr>
                 {movements.map((movement) => {
                     return <tr>
@@ -85,6 +96,9 @@ const Movements: React.FC = () => {
                         <td>{movement.type}</td>
                         <td>{movement.amount}</td>
                         <td>{movement.balance}</td>
+                        <td>
+                            <Button variant="danger" onClick={() => deleteMovement(movement.movementId)}>Delete</Button>
+                        </td>
                     </tr>;
                 })}
             </tbody>
