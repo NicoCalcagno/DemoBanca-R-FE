@@ -1,8 +1,8 @@
 import React from "react";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
-import Accounts from "./pages/Account";
-import Client from "./pages/Client";
-import Movements from './pages/Movement';
+import Accounts from "./components/account/Account";
+import Client from "./components/client/Client";
+import Movements from './components/movement/Movement';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
